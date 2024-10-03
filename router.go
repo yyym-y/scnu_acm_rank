@@ -3,13 +3,14 @@
 package main
 
 import (
-	"github.com/cloudwego/hertz/pkg/app/server"
 	"log"
 	handler "scnu_acm_rank/biz/handler"
 	root2 "scnu_acm_rank/biz/handler/root"
 	super2 "scnu_acm_rank/biz/handler/super"
 	user2 "scnu_acm_rank/biz/handler/user"
 	"scnu_acm_rank/biz/middle"
+
+	"github.com/cloudwego/hertz/pkg/app/server"
 )
 
 // customizeRegister registers customize routers.
@@ -41,10 +42,12 @@ func customizedRegister(r *server.Hertz) {
 	r.GET("/TeamDetail", handler.TeamDetail)
 	user := r.Group("/user")
 	user.Use(auth.MiddlewareFunc())
-	user.POST("/edit", user2.EditUser)         // 1
-	user.GET("/detail", handler.UserDetail)    // 1
-	user.POST("/createTeam", user2.CreateTeam) // 1
-	user.POST("/joinTeam", user2.JoinTeam)     // 1
+	user.POST("/edit", user2.EditUser)                   // 1
+	user.GET("/detail", handler.UserDetail)              // 1
+	user.POST("/createTeam", user2.CreateTeam)           // 1
+	user.POST("/joinTeam", user2.JoinTeam)               // 1
+	user.POST("/editTeam", user2.EditTeam)               // 1
+	user.POST("/totalTeamDetail", user2.TotalTeamDetail) // 1
 
 	root := r.Group("/root")
 	root.POST("/createCompetition", root2.CreateCompetition) // 1
