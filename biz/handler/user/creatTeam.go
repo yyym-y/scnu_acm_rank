@@ -3,14 +3,15 @@ package user
 import (
 	"context"
 	"errors"
-	"github.com/cloudwego/hertz/pkg/app"
-	"gorm.io/gorm"
 	"net/http"
 	"runtime"
 	"scnu_acm_rank/biz/middle"
 	"scnu_acm_rank/biz/model"
 	"scnu_acm_rank/biz/reqModel"
 	"sync"
+
+	"github.com/cloudwego/hertz/pkg/app"
+	"gorm.io/gorm"
 )
 
 var mutex sync.Mutex
@@ -37,6 +38,7 @@ func CreateTeam(ctx context.Context, c *app.RequestContext) {
 	team.Leader = user.StuId
 	team.Key = req.Key
 	team.Name = req.Name
+	team.NcTeamName = req.NcTeamName
 	team.Status = 1
 	err = model.DB.Transaction(func(tx *gorm.DB) error {
 		tx.Save(&team).Find(&team)
