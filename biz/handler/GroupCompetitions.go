@@ -2,10 +2,11 @@ package handler
 
 import (
 	"context"
-	"github.com/cloudwego/hertz/pkg/app"
 	"net/http"
 	"scnu_acm_rank/biz/middle"
 	"scnu_acm_rank/biz/model"
+
+	"github.com/cloudwego/hertz/pkg/app"
 )
 
 func GroupCompetitions(ctx context.Context, c *app.RequestContext) {
@@ -27,5 +28,4 @@ func GroupCompetitions(ctx context.Context, c *app.RequestContext) {
 		mp = append(mp, t)
 	}
 	c.JSON(http.StatusOK, middle.SuccessResp("", mp))
-
 }

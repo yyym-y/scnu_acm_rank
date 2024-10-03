@@ -77,17 +77,17 @@ AND rr.comp_id = tc.id;`
 func GetGroupCompetitionsByTeam(id string) ([]GroupResult, error) {
 	ti := time.Now().Add(-time.Hour * 24 * 180)
 	sql := `SELECT rr.group_id, tt.name, tc.name comp_name, tu.rank, tu.solve, tu.penalty, tu.score, tc.start_date FROM
-(SELECT user.group_id, a.comp_id, MIN(a.rank) rk
-FROM user, user_competition a, competition b
-WHERE user.group_id = ? AND ((user.vj_name = a.vj_name AND a.comp_id = b.id AND b.kind = 13) OR (user.nc_name = a.vj_name AND a.comp_id = b.id AND b.kind = 14)) AND b.start_date > ? AND group_id > 0
-GROUP BY user.group_id, a.comp_id
-) rr, team tt, user_competition tu, competition tc
-WHERE rr.group_id = tt.id  
-AND rr.comp_id = tu.comp_id
-AND rr.rk = tu.rank 
-AND rr.comp_id = tc.id;
+			(
+				SELECT user.group_id, a.comp_id, MIN(a.rank) rk FROM user, user_competition a, competition b
+				WHERE user.group_id = ? AND (
+					(user.vj_name = a.vj_name AND a.comp_id = b.id AND b.kind = 13) OR 
+					(a.vj_name = (SELECT nc_team_name FROM team WHERE id = ?) AND a.comp_id = b.id AND b.kind = 14))
+					AND b.start_date > ? AND group_id > 0
+				GROUP BY user.group_id, a.comp_id
+			) rr, team tt, user_competition tu, competition tc
+			WHERE rr.group_id = tt.id AND rr.comp_id = tu.comp_id AND rr.rk = tu.rank AND rr.comp_id = tc.id;
 `
 	res := make([]GroupResult, 0)
-	DB.Raw(sql, id, ti).Find(&res)
+	DB.Raw(sql, id, id, ti).Find(&res)
 	return res, nil
 }
