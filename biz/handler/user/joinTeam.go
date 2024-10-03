@@ -3,11 +3,12 @@ package user
 import (
 	"context"
 	"errors"
-	"github.com/cloudwego/hertz/pkg/app"
 	"net/http"
 	"scnu_acm_rank/biz/middle"
 	"scnu_acm_rank/biz/model"
 	"scnu_acm_rank/biz/reqModel"
+
+	"github.com/cloudwego/hertz/pkg/app"
 )
 
 func JoinTeam(ctx context.Context, c *app.RequestContext) {
@@ -30,14 +31,14 @@ func JoinTeam(ctx context.Context, c *app.RequestContext) {
 	team := model.Team{}
 	model.DB.Model(&team).Where("team.key = ? AND team.leader = ?", req.Key, req.StuId).First(&team)
 	if team.Id == 0 {
-		c.JSON(http.StatusOK, middle.FailResp(errors.New("不存在该队伍")))
+		c.JSON(http.StatusOK, middle.FailRespWithMsg("不存在该队伍"))
 		return
 	}
 	var cnt int64
 	// 检验队伍人数
 	model.DB.Model(&user).Where("group_id = ?", team.Id).Count(&cnt)
 	if cnt >= 3 {
-		c.JSON(http.StatusOK, middle.FailResp(errors.New("队伍人数已满")))
+		c.JSON(http.StatusOK, middle.FailRespWithMsg("队伍人数已满"))
 		return
 	}
 	mutex.Lock()

@@ -5,8 +5,16 @@ import "github.com/cloudwego/hertz/pkg/common/utils"
 func FailResp(err error) utils.H {
 	return utils.H{
 		"status": 1,
-		"msg":    err,
-		"data":   "",
+		"msg":    "",
+		"data":   err,
+	}
+}
+
+func FailRespWithMsg(msg string) utils.H {
+	return utils.H{
+		"status": 1,
+		"msg":    msg,
+		"data":   nil,
 	}
 }
 

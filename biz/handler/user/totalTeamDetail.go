@@ -27,5 +27,5 @@ func TotalTeamDetail(ctx context.Context, c *app.RequestContext) {
     			SELECT group_id FROM user WHERE stu_id = ?
 			);`
 	model.DB.Raw(sql, user.StuId).Find(&res)
-	c.JSON(http.StatusOK, middle.SuccessResp("测试", res[0]))
+	c.JSON(http.StatusOK, middle.SuccessResp("查询成功", res[0]))
 }
