@@ -3,10 +3,11 @@ package middle
 import (
 	"crypto/tls"
 	"fmt"
-	"github.com/jordan-wright/email"
+	"math/rand"
 	"net/smtp"
 	"scnu_acm_rank/biz/config"
-	"time"
+
+	"github.com/jordan-wright/email"
 )
 
 type emailConfig struct {
@@ -36,12 +37,11 @@ func SendEmail(to []string) error {
 	e.To = to
 	code := ""
 	for i := 0; i < 6; i++ {
-		code += fmt.Sprintf("%v", time.Now().UnixNano()%10)
+		code += fmt.Sprintf("%d", rand.Intn(10))
 	}
 	e.Subject = E.subject
-	e.Text = []byte("欢迎注册scnu_acm_rank，您的验证码是： ")
-	e.HTML = []byte("<h1>" + code + "</h1>")
-	err := e.SendWithTLS("smtp.qq.com:465", smtp.PlainAuth("", E.from, E.password, "smtp.qq.com"), &tls.Config{InsecureSkipVerify: true, ServerName: "smtp.qq.com"})
+	e.HTML = []byte("欢迎注册scnu_acm_rank, 您的验证码是: <h1>" + code + "</h1> ")
+	err := e.SendWithStartTLS("smtp.163.com:25", smtp.PlainAuth("", E.from, E.password, "smtp.163.com"), &tls.Config{InsecureSkipVerify: true, ServerName: "smtp.163.com"})
 	if err != nil {
 		return err
 	}
@@ -54,9 +54,8 @@ func SendKeyEmail(to []string, code string) error {
 	e.From = E.from
 	e.To = to
 	e.Subject = E.subject
-	e.Text = []byte("您所创建队伍的口令为：")
-	e.HTML = []byte("<h1>" + code + "</h1>")
-	err := e.SendWithTLS("smtp.qq.com:465", smtp.PlainAuth("", E.from, E.password, "smtp.qq.com"), &tls.Config{InsecureSkipVerify: true, ServerName: "smtp.qq.com"})
+	e.HTML = []byte("您所创建队伍的口令为： <h1>" + code + "</h1>")
+	err := e.SendWithStartTLS("smtp.163.com:25", smtp.PlainAuth("", E.from, E.password, "smtp.163.com"), &tls.Config{InsecureSkipVerify: true, ServerName: "smtp.163.com"})
 	if err != nil {
 		return err
 	}
