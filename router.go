@@ -26,31 +26,31 @@ func customizedRegister(r *server.Hertz) {
 		log.Fatal("authMiddleware.MiddlewareInit() Error:" + errInit.Error())
 	}
 
-	r.GET("/ping", handler.Ping)
+	r.POST("/login", auth.LoginHandler)                    // 用户登录
+	r.POST("/register", handler.Register)                  // 用户注册
+	r.POST("/sendEmail", handler.SendEmail)                // 发送验证码
+	r.GET("/personCompetitions", handler.UserCompetitions) // 获取个人参加的所有比赛列表
+	r.GET("/groupCompetitions", handler.GroupCompetitions) // 获取团队参加的所有比赛列表
+	r.GET("/TeamDetail", handler.TeamDetail)               // 获取队伍所有成员信息
 
+	// 比赛相关的路由组
 	competition := r.Group("/competition")
-	competition.GET("/person", handler.CompetitionPerson)
-	competition.GET("/group", handler.CompetitionGroup)
+	competition.GET("/person", handler.CompetitionPerson) // 获取首页个人 Rank 列表
+	competition.GET("/group", handler.CompetitionGroup)   // 获取首页团队 Rank 列表
 	competition.GET("/detail", handler.CompetitionDetail) // 1
 
-	// your code ...
-	r.POST("/login", auth.LoginHandler)    //1
-	r.POST("/register", handler.Register)  //1
-	r.POST("sendEmail", handler.SendEmail) // 1
-	r.GET("/personCompetitions", handler.UserCompetitions)
-	r.GET("/groupCompetitions", handler.GroupCompetitions)
-	r.GET("/TeamDetail", handler.TeamDetail)
+	// 用户相关的路由组
 	user := r.Group("/user")
 	user.Use(auth.MiddlewareFunc())
 	user.POST("/edit", user2.EditUser)                   // 1
 	user.GET("/detail", handler.UserDetail)              // 1
-	user.POST("/createTeam", user2.CreateTeam)           // 1
-	user.POST("/joinTeam", user2.JoinTeam)               // 1
-	user.POST("/editTeam", user2.EditTeam)               // 1
-	user.POST("/totalTeamDetail", user2.TotalTeamDetail) // 1
+	user.POST("/createTeam", user2.CreateTeam)           // 用户创建队伍
+	user.POST("/joinTeam", user2.JoinTeam)               // 用户加入队伍
+	user.POST("/editTeam", user2.EditTeam)               // 用户编辑队伍信息
+	user.POST("/totalTeamDetail", user2.TotalTeamDetail) // 获取本人队伍的详细信息
 
 	root := r.Group("/root")
-	root.POST("/createCompetition", root2.CreateCompetition) // 1
+	root.POST("/createCompetition", root2.CreateCompetition) // 添加比赛
 	root.POST("/updateConfig", root2.UpdateConfig)           // 1
 
 	super := r.Group("/super")
